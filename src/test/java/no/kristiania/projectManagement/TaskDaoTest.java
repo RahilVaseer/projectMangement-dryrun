@@ -1,5 +1,6 @@
 package no.kristiania.projectManagement;
 
+import org.flywaydb.core.Flyway;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.Test;
 
@@ -13,11 +14,9 @@ public class TaskDaoTest {
     @Test
     void shouldRetriveStoredData() throws SQLException {
         JdbcDataSource dataSource = new JdbcDataSource();
-        dataSource.setUrl("jdbc:h2:mem:myTestDatabase");
+        dataSource.setUrl("jdbc:h2:mem:myTestDatabase;DB_CLOSE_DELAY=-1");
 
-        dataSource.getConnection().createStatement().executeUpdate(
-                "create table TASKS (id serial primary key, name varchar(1000) not null)"
-        );
+        Flyway.configure().dataSource(dataSource).load().migrate();
 
         TaskDao dao = new TaskDao(dataSource);
         String task = sampleTask();
@@ -27,7 +26,8 @@ public class TaskDaoTest {
     }
 
     private String sampleTask() {
-        String[] alternatives = {"Get files", "Deadline til 8pm", "meeting"
+        String[] alternatives = {
+                "Get files", "Deadline til 8pm", "meeting"
         };
 
         return alternatives[new Random().nextInt(alternatives.length)];
