@@ -66,7 +66,9 @@ public class ProjectManager {
     private void insertTask() throws IOException, SQLException {
         System.out.println("Please type the name of new task");
         String taskName = input.readLine();
-        taskDao.insert(taskName);
+        Task task = new Task();
+        task.setName(taskName);
+        taskDao.insert(task);
     }
 
 }
